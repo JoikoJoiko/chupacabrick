@@ -11,6 +11,11 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
 
     path('dashboard/', views.dashboard, name='dashboard'),
+    path(
+        'dashboard/taken/<int:medicine_id>/<str:planned_time>/',
+        views.mark_taken,
+        name='mark_taken'
+    ),
 
     path('medicines/', views.medicines_list, name='medicines'),
     path('medicines/create/', views.medicine_create, name='medicine_create'),

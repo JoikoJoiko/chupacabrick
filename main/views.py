@@ -1,12 +1,15 @@
+from datetime import datetime
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import CreateView
 
 from .forms import RegisterForm, LoginForm, MedicineForm, MedicineTimeFormSet
-from .models import Medicine, MedicineTime
+from .models import IntakeHistory, Medicine, MedicineTime, Pet
 
 
 def index(request):
@@ -38,13 +41,199 @@ def user_logout(request):
     return redirect('main:index')
 
 
+def get_today_weekday_field():
+    weekday = timezone.localdate().weekday()
+
+    fields = [
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday',
+    ]
+
+    return fields[weekday]
+
+
+def get_today_medicines(user):
+    today = timezone.localdate()
+    weekday_field = get_today_weekday_field()
+
+    filters = {
+        'user': user,
+        'start_date__lte': today,
+        weekday_field: True,
+    }
+
+    medicines = Medicine.objects.filter(**filters).prefetch_related('times')
+
+    medicines = medicines.filter(end_date__isnull=True) | medicines.filter(end_date__gte=today)
+
+    return medicines.distinct()
+
+
+def get_or_create_pet(user):
+    pet, _ = Pet.objects.get_or_create(
+        user=user,
+        defaults={
+            'name': 'Чупакабрик',
+            'level': 1,
+            'health': 100,
+            'experience': 0,
+            'missed_in_row': 0,
+            'status': Pet.STATUS_NORMAL,
+            'is_alive': True,
+        }
+    )
+
+    return pet
+
+
+def update_pet_after_taken(pet):
+    if not pet.is_alive:
+        return
+
+    pet.experience += 10
+    pet.health = min(pet.health + 5, 100)
+    pet.missed_in_row = 0
+
+    if pet.experience >= pet.level * 50:
+        pet.level += 1
+        pet.experience = 0
+
+    if pet.health >= 75:
+        pet.status = Pet.STATUS_HAPPY
+    elif pet.health >= 35:
+        pet.status = Pet.STATUS_NORMAL
+    else:
+        pet.status = Pet.STATUS_SAD
+
+    pet.save()
+
+
+def update_pet_after_missed(pet):
+    if not pet.is_alive:
+        return
+
+    pet.health = max(pet.health - 20, 0)
+    pet.missed_in_row += 1
+
+    if pet.missed_in_row >= 3 or pet.health <= 0:
+        pet.status = Pet.STATUS_DEAD
+        pet.is_alive = False
+        pet.health = 0
+    elif pet.health < 35:
+        pet.status = Pet.STATUS_SAD
+    elif pet.health < 75:
+        pet.status = Pet.STATUS_NORMAL
+
+    pet.save()
+
+
+def fix_missed_intakes(user):
+    today = timezone.localdate()
+    now_time = timezone.localtime().time()
+    pet = get_or_create_pet(user)
+
+    medicines = get_today_medicines(user)
+
+    for medicine in medicines:
+        for medicine_time in medicine.times.all():
+            if medicine_time.time >= now_time:
+                continue
+
+            exists = IntakeHistory.objects.filter(
+                user=user,
+                medicine=medicine,
+                planned_time=medicine_time.time,
+                date=today,
+            ).exists()
+
+            if exists:
+                continue
+
+            IntakeHistory.objects.create(
+                user=user,
+                medicine=medicine,
+                planned_time=medicine_time.time,
+                date=today,
+                status=IntakeHistory.STATUS_MISSED,
+            )
+
+            update_pet_after_missed(pet)
+
+
+def build_today_schedule(user):
+    today = timezone.localdate()
+    medicines = get_today_medicines(user)
+
+    schedule = []
+
+    for medicine in medicines:
+        for medicine_time in medicine.times.all():
+            history = IntakeHistory.objects.filter(
+                user=user,
+                medicine=medicine,
+                planned_time=medicine_time.time,
+                date=today,
+            ).first()
+
+            schedule.append({
+                'medicine': medicine,
+                'time': medicine_time.time,
+                'history': history,
+            })
+
+    schedule.sort(key=lambda item: item['time'])
+
+    return schedule
+
+
 @login_required
 def dashboard(request):
-    medicines = Medicine.objects.filter(user=request.user).prefetch_related('times')
+    fix_missed_intakes(request.user)
+
+    pet = get_or_create_pet(request.user)
+    schedule = build_today_schedule(request.user)
 
     return render(request, 'main/dashboard.html', {
-        'medicines': medicines,
+        'pet': pet,
+        'schedule': schedule,
     })
+
+
+@login_required
+def mark_taken(request, medicine_id, planned_time):
+    if request.method != 'POST':
+        return redirect('main:dashboard')
+
+    medicine = get_object_or_404(Medicine, pk=medicine_id, user=request.user)
+    today = timezone.localdate()
+
+    planned_time_obj = datetime.strptime(planned_time, '%H:%M').time()
+
+    history, created = IntakeHistory.objects.get_or_create(
+        user=request.user,
+        medicine=medicine,
+        planned_time=planned_time_obj,
+        date=today,
+        defaults={
+            'status': IntakeHistory.STATUS_TAKEN,
+            'marked_at': timezone.now(),
+        }
+    )
+
+    if not created and history.status != IntakeHistory.STATUS_TAKEN:
+        history.status = IntakeHistory.STATUS_TAKEN
+        history.marked_at = timezone.now()
+        history.save()
+
+    pet = get_or_create_pet(request.user)
+    update_pet_after_taken(pet)
+
+    return redirect('main:dashboard')
 
 
 @login_required

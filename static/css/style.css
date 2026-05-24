@@ -1026,3 +1026,127 @@ a {
         font-size: 28px;
     }
 }
+
+/* Today schedule */
+
+.schedule-note {
+    overflow: hidden;
+}
+
+.today-list {
+    display: grid;
+    gap: 10px;
+    max-height: 330px;
+    overflow: hidden;
+}
+
+.today-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 242, 217, 0.82);
+    border: 1px solid #f0cbd5;
+}
+
+.today-item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #b83d6b;
+    font-size: 16px;
+}
+
+.today-item span {
+    display: block;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.today-item small {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.status-pill {
+    display: inline-flex;
+    min-width: 72px;
+    min-height: 28px;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.status-pill--taken {
+    background: #d8f5d0;
+    color: #3d7e35;
+}
+
+.status-pill--missed {
+    background: #ffd4df;
+    color: #b83d6b;
+}
+
+.mini-btn {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: var(--pink);
+    box-shadow: 0 4px 0 var(--pink-dark);
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.mini-btn:hover {
+    transform: translateY(-1px);
+}
+
+.empty-small {
+    padding: 12px;
+    background: rgba(255, 242, 217, 0.82);
+    border: 1px solid #f0cbd5;
+}
+
+.empty-small p {
+    margin: 0 0 10px;
+    color: var(--muted);
+}
+
+.empty-small a {
+    color: #b83d6b;
+    font-weight: 900;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+.pet-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.pet-stats span {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    padding: 5px 9px;
+    background: rgba(255, 248, 239, 0.9);
+    border: 1px solid #f0cbd5;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.pet-warning {
+    color: #b83d6b !important;
+    font-weight: 900;
+}

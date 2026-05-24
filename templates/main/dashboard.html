@@ -5,10 +5,42 @@
 
 {% block content %}
 <section class="dashboard-screen">
-    <aside class="side-note">
+    <aside class="side-note schedule-note">
         <div class="small-tape"></div>
+
         <h2>Сегодня</h2>
-        <p>Здесь будет список таблеток на текущий день.</p>
+
+        <div class="today-list">
+            {% for item in schedule %}
+                <article class="today-item">
+                    <div>
+                        <strong>{{ item.time|time:"H:i" }}</strong>
+                        <span>{{ item.medicine.title }}</span>
+
+                        {% if item.medicine.comment %}
+                            <small>{{ item.medicine.comment }}</small>
+                        {% endif %}
+                    </div>
+
+                    {% if item.history %}
+                        {% if item.history.status == 'taken' %}
+                            <span class="status-pill status-pill--taken">принято</span>
+                        {% else %}
+                            <span class="status-pill status-pill--missed">пропуск</span>
+                        {% endif %}
+                    {% else %}
+<form method="post" action="{% url 'main:mark_taken' item.medicine.pk item.time|time:'H:i' %}">
+    {% csrf_token %}
+    <button type="submit" class="mini-btn">✓</button>
+</form>                    {% endif %}
+                </article>
+            {% empty %}
+                <div class="empty-small">
+                    <p>На сегодня лекарств нет.</p>
+                    <a href="{% url 'main:medicine_create' %}">Добавить</a>
+                </div>
+            {% endfor %}
+        </div>
     </aside>
 
     <section class="pet-panel">
@@ -17,20 +49,42 @@
 
         <img src="{% static 'img/chupacabrik.png' %}" alt="Чупакабрик" class="dashboard-pet">
 
-        <h1>Привет, {{ user.username }}!</h1>
-        <p>Твой Чупакабрик уже ждёт расписание лекарств.</p>
+        <h1>{{ pet.name }}</h1>
+
+        <div class="pet-stats">
+            <span>Уровень: {{ pet.level }}</span>
+            <span>Здоровье: {{ pet.health }}</span>
+            <span>Статус: {{ pet.get_status_display }}</span>
+        </div>
+
+        {% if not pet.is_alive %}
+            <p class="pet-warning">
+                Чупакабрик умер из-за пропусков. Потом сделаем кнопку создания нового.
+            </p>
+        {% else %}
+            <p>
+                Отмечай лекарства вовремя, чтобы Чупакабрик был счастливым.
+            </p>
+        {% endif %}
 
         <div class="pet-actions">
-            <button class="paper-btn paper-btn--primary">Погладить</button>
-            <button class="paper-btn paper-btn--secondary">Поиграть</button>
+            <button class="paper-btn paper-btn--primary" type="button">Погладить</button>
+            <button class="paper-btn paper-btn--secondary" type="button">Поиграть</button>
         </div>
     </section>
 
-    <aside class="side-note">
+    <aside class="side-note profile-note">
         <div class="small-tape"></div>
+
         <h2>Профиль</h2>
-        <p>Имя: {{ user.username }}</p>
-        <p>Здесь будет уровень, здоровье и статистика.</p>
+
+        <p><strong>Имя:</strong> {{ user.username }}</p>
+        <p><strong>Пропусков подряд:</strong> {{ pet.missed_in_row }}</p>
+        <p><strong>Опыт:</strong> {{ pet.experience }}</p>
+
+        <a href="{% url 'main:medicines' %}" class="paper-btn paper-btn--secondary">
+            Мои лекарства
+        </a>
     </aside>
 </section>
 {% endblock %}
