@@ -321,6 +321,15 @@ def medicine_update(request, pk):
 
 
 @login_required
+def intake_history(request):
+    history = IntakeHistory.objects.filter(
+        user=request.user
+    ).select_related('medicine')
+
+    return render(request, 'main/history.html', {
+        'history': history,
+    })
+
 def medicine_delete(request, pk):
     medicine = get_object_or_404(Medicine, pk=pk, user=request.user)
 

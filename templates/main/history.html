@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}История — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="content-screen">
+    <div class="content-header">
+        <div>
+            <p class="content-label">журнал приёма</p>
+            <h1>История</h1>
+        </div>
+
+        <a href="{% url 'main:dashboard' %}" class="paper-btn paper-btn--secondary">
+            На сегодня
+        </a>
+    </div>
+
+    <div class="history-board">
+        {% for item in history %}
+            <article class="history-row">
+                <div class="history-row__date">
+                    <strong>{{ item.date|date:"d.m.Y" }}</strong>
+                    <span>{{ item.planned_time|time:"H:i" }}</span>
+                </div>
+
+                <div class="history-row__medicine">
+                    <h2>{{ item.medicine.title }}</h2>
+
+                    {% if item.medicine.comment %}
+                        <p>{{ item.medicine.comment }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="history-row__status">
+                    {% if item.status == 'taken' %}
+                        <span class="status-pill status-pill--taken">принято</span>
+                    {% else %}
+                        <span class="status-pill status-pill--missed">пропуск</span>
+                    {% endif %}
+
+                    {% if item.marked_at %}
+                        <small>{{ item.marked_at|date:"d.m.Y H:i" }}</small>
+                    {% else %}
+                        <small>без отметки</small>
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-note">
+                <div class="small-tape"></div>
+                <h2>История пустая</h2>
+                <p>
+                    Здесь появятся записи после отметки лекарств или автоматической фиксации пропусков.
+                </p>
+                <a href="{% url 'main:dashboard' %}" class="paper-btn paper-btn--primary">
+                    Перейти в кабинет
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

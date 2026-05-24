@@ -23,6 +23,7 @@
     {% if user.is_authenticated %}
         <a href="{% url 'main:dashboard' %}">Кабинет</a>
         <a href="{% url 'main:medicines' %}">Лекарства</a>
+        <a href="{% url 'main:history' %}">История</a>
         <a href="{% url 'main:logout' %}">Выйти</a>
     {% else %}
         <a href="{% url 'main:login' %}">Войти</a>
