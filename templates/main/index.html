@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ChupaCare — забота о лекарствах{% endblock %}
+
+{% block content %}
+<section class="home-screen">
+    <div class="home-screen__top">
+        <div></div>
+
+        <a href="https://github.com/JoikoJoiko/chupacabrick" class="github-link" target="_blank">
+            GitHub
+        </a>
+    </div>
+
+    <div class="home-screen__content">
+        <div class="note-card note-card--main">
+            <div class="tape tape--left"></div>
+            <div class="tape tape--right"></div>
+
+            <p class="note-card__label">личный помощник</p>
+
+            <h1>Не забудь принять лекарства</h1>
+
+            <p class="note-card__text">
+                ChupaCare помогает вести расписание таблеток, отмечать приём
+                и заботиться о маленьком Чупакабрике, настроение которого зависит
+                от твоей дисциплины.
+            </p>
+
+            <div class="note-card__actions">
+                <a href="#" class="paper-btn paper-btn--primary">Войти</a>
+                <a href="#" class="paper-btn paper-btn--secondary">Регистрация</a>
+            </div>
+        </div>
+
+        <div class="stickers-zone">
+            <div class="photo-sticker photo-sticker--first">
+                <img src="{% static 'img/chupacabrik.png' %}" alt="Чупакабрик">
+            </div>
+
+            <div class="photo-sticker photo-sticker--second">
+                <img src="{% static 'img/chupacabrik.png' %}" alt="Весёлый Чупакабрик">
+            </div>
+        </div>
+    </div>
+
+    <div class="home-screen__bottom">
+        <article class="paper-info-card">
+            <div class="small-tape"></div>
+            <h2>Расписание</h2>
+            <p>Добавляй таблетки, время приёма, дни недели и комментарии вроде «после еды».</p>
+        </article>
+
+        <article class="paper-info-card">
+            <div class="small-tape"></div>
+            <h2>История</h2>
+            <p>Система сохраняет дату, статус и время отметки: принято или пропущено.</p>
+        </article>
+
+        <article class="paper-info-card">
+            <div class="small-tape"></div>
+            <h2>Питомец</h2>
+            <p>Вовремя принятые лекарства улучшают состояние Чупакабрика, пропуски — ухудшают.</p>
+        </article>
+    </div>
+</section>
+{% endblock %}
