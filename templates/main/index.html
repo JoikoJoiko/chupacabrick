@@ -28,11 +28,14 @@
                 от твоей дисциплины.
             </p>
 
-            <div class="note-card__actions">
-                <a href="#" class="paper-btn paper-btn--primary">Войти</a>
-                <a href="#" class="paper-btn paper-btn--secondary">Регистрация</a>
-            </div>
-        </div>
+<div class="note-card__actions">
+    {% if user.is_authenticated %}
+        <a href="{% url 'main:dashboard' %}" class="paper-btn paper-btn--primary">В кабинет</a>
+    {% else %}
+        <a href="{% url 'main:login' %}" class="paper-btn paper-btn--primary">Войти</a>
+        <a href="{% url 'main:register' %}" class="paper-btn paper-btn--secondary">Регистрация</a>
+    {% endif %}
+</div>        </div>
 
         <div class="stickers-zone">
             <div class="photo-sticker photo-sticker--first">

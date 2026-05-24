@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="auth-screen">
+    <div class="auth-card">
+        <div class="tape tape--left"></div>
+        <div class="tape tape--right"></div>
+
+        <h1>Войти</h1>
+
+        <form method="post" class="paper-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <label>
+                <span>Логин</span>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </label>
+
+            <label>
+                <span>Пароль</span>
+                {{ form.password }}
+                {{ form.password.errors }}
+            </label>
+
+            <button type="submit" class="paper-btn paper-btn--primary">Дальше</button>
+        </form>
+
+        <p class="auth-card__bottom">
+            Ещё не знакомы с Чупакабриком?
+            <a href="{% url 'main:register' %}">Познакомиться</a>
+        </p>
+    </div>
+
+    <div class="auth-stickers">
+        <div class="photo-sticker photo-sticker--auth-one">
+            <img src="{% static 'img/chupacabrik.png' %}" alt="Чупакабрик">
+        </div>
+
+        <div class="photo-sticker photo-sticker--auth-two">
+            <img src="{% static 'img/chupacabrik.png' %}" alt="Чупакабрик">
+        </div>
+    </div>
+</section>
+{% endblock %}

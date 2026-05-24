@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Кабинет — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="dashboard-screen">
+    <aside class="side-note">
+        <div class="small-tape"></div>
+        <h2>Сегодня</h2>
+        <p>Здесь будет список таблеток на текущий день.</p>
+    </aside>
+
+    <section class="pet-panel">
+        <div class="tape tape--left"></div>
+        <div class="tape tape--right"></div>
+
+        <img src="{% static 'img/chupacabrik.png' %}" alt="Чупакабрик" class="dashboard-pet">
+
+        <h1>Привет, {{ user.username }}!</h1>
+        <p>Твой Чупакабрик уже ждёт расписание лекарств.</p>
+
+        <div class="pet-actions">
+            <button class="paper-btn paper-btn--primary">Погладить</button>
+            <button class="paper-btn paper-btn--secondary">Поиграть</button>
+        </div>
+    </section>
+
+    <aside class="side-note">
+        <div class="small-tape"></div>
+        <h2>Профиль</h2>
+        <p>Имя: {{ user.username }}</p>
+        <p>Здесь будет уровень, здоровье и статистика.</p>
+    </aside>
+</section>
+{% endblock %}
