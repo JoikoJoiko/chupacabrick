@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление лекарства — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="form-screen">
+    <form method="post" class="delete-card">
+        {% csrf_token %}
+
+        <div class="tape tape--left"></div>
+        <div class="tape tape--right"></div>
+
+        <h1>Удалить лекарство?</h1>
+
+        <p>
+            Лекарство <strong>«{{ medicine.title }}»</strong> будет удалено вместе
+            со временем приёма. Это действие нельзя отменить.
+        </p>
+
+        <div class="form-actions">
+            <button type="submit" class="paper-btn paper-btn--primary">Удалить</button>
+            <a href="{% url 'main:medicines' %}" class="paper-btn paper-btn--secondary">Отмена</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

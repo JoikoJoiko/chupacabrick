@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Лекарства — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="content-screen">
+    <div class="content-header">
+        <div>
+            <p class="content-label">моя аптечка</p>
+            <h1>Лекарства</h1>
+        </div>
+
+        <a href="{% url 'main:medicine_create' %}" class="paper-btn paper-btn--primary">
+            Добавить
+        </a>
+    </div>
+
+    <div class="medicine-grid">
+        {% for medicine in medicines %}
+            <article class="medicine-card">
+                <div class="small-tape"></div>
+
+                <h2>{{ medicine.title }}</h2>
+
+                {% if medicine.comment %}
+                    <p class="medicine-card__comment">{{ medicine.comment }}</p>
+                {% endif %}
+
+                <div class="medicine-card__meta">
+                    <span>с {{ medicine.start_date|date:"d.m.Y" }}</span>
+
+                    {% if medicine.end_date %}
+                        <span>до {{ medicine.end_date|date:"d.m.Y" }}</span>
+                    {% else %}
+                        <span>без даты окончания</span>
+                    {% endif %}
+                </div>
+
+                <div class="weekdays">
+                    <span class="{% if medicine.monday %}is-active{% endif %}">Пн</span>
+                    <span class="{% if medicine.tuesday %}is-active{% endif %}">Вт</span>
+                    <span class="{% if medicine.wednesday %}is-active{% endif %}">Ср</span>
+                    <span class="{% if medicine.thursday %}is-active{% endif %}">Чт</span>
+                    <span class="{% if medicine.friday %}is-active{% endif %}">Пт</span>
+                    <span class="{% if medicine.saturday %}is-active{% endif %}">Сб</span>
+                    <span class="{% if medicine.sunday %}is-active{% endif %}">Вс</span>
+                </div>
+
+                <div class="medicine-times">
+                    {% for item in medicine.times.all %}
+                        <span>{{ item.time|time:"H:i" }}</span>
+                    {% empty %}
+                        <span>время не указано</span>
+                    {% endfor %}
+                </div>
+
+                <div class="medicine-card__actions">
+                    <a href="{% url 'main:medicine_update' medicine.pk %}">Изменить</a>
+                    <a href="{% url 'main:medicine_delete' medicine.pk %}">Удалить</a>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-note">
+                <div class="small-tape"></div>
+                <h2>Пока пусто</h2>
+                <p>Добавь первое лекарство, чтобы Чупакабрик начал следить за расписанием.</p>
+                <a href="{% url 'main:medicine_create' %}" class="paper-btn paper-btn--primary">
+                    Добавить лекарство
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="form-screen">
+    <form method="post" class="medicine-form-card">
+        {% csrf_token %}
+
+        <div class="tape tape--left"></div>
+        <div class="tape tape--right"></div>
+
+        <h1>{{ page_title }}</h1>
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-grid">
+            <label>
+                <span>{{ form.title.label }}</span>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </label>
+
+            <label>
+                <span>{{ form.comment.label }}</span>
+                {{ form.comment }}
+                {{ form.comment.errors }}
+            </label>
+
+            <label>
+                <span>{{ form.start_date.label }}</span>
+                {{ form.start_date }}
+                {{ form.start_date.errors }}
+            </label>
+
+            <label>
+                <span>{{ form.end_date.label }}</span>
+                {{ form.end_date }}
+                {{ form.end_date.errors }}
+            </label>
+        </div>
+
+        <div class="weekdays-form">
+            <p>Дни приёма</p>
+
+            <div class="weekdays-form__list">
+                <label>{{ form.monday }} <span>Пн</span></label>
+                <label>{{ form.tuesday }} <span>Вт</span></label>
+                <label>{{ form.wednesday }} <span>Ср</span></label>
+                <label>{{ form.thursday }} <span>Чт</span></label>
+                <label>{{ form.friday }} <span>Пт</span></label>
+                <label>{{ form.saturday }} <span>Сб</span></label>
+                <label>{{ form.sunday }} <span>Вс</span></label>
+            </div>
+        </div>
+
+        <div class="times-form">
+            <p>Время приёма</p>
+
+            {{ formset.management_form }}
+
+            <div class="times-form__list">
+                {% for time_form in formset %}
+                    <div class="time-row">
+                        {{ time_form.id }}
+
+                        <label>
+                            <span>{{ time_form.time.label }}</span>
+                            {{ time_form.time }}
+                            {{ time_form.time.errors }}
+                        </label>
+
+                        {% if time_form.instance.pk %}
+                            <label class="delete-row">
+                                {{ time_form.DELETE }}
+                                <span>Удалить</span>
+                            </label>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="paper-btn paper-btn--primary">{{ button_text }}</button>
+            <a href="{% url 'main:medicines' %}" class="paper-btn paper-btn--secondary">Назад</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

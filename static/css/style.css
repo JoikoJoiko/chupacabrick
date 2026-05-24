@@ -725,3 +725,304 @@ a {
     gap: 12px;
     margin-top: 24px;
 }
+
+/* Content pages */
+
+.content-screen,
+.form-screen {
+    height: 100%;
+    min-height: 0;
+    padding: 24px 28px;
+    border: 2px solid rgba(243, 212, 220, 0.9);
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.74) 0,
+            rgba(255, 255, 255, 0.74) 2px,
+            transparent 2px,
+            transparent 34px
+        ),
+        linear-gradient(180deg, rgba(255, 244, 246, 0.8), rgba(255, 240, 244, 0.8));
+    overflow: hidden;
+}
+
+.content-screen {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 20px;
+}
+
+.content-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.content-label {
+    margin: 0 0 6px;
+    color: var(--pink-dark);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.content-header h1 {
+    margin: 0;
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: -0.06em;
+}
+
+.medicine-grid {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(230px, 1fr));
+    gap: 22px;
+    overflow: hidden;
+    align-content: start;
+}
+
+.medicine-card,
+.empty-note,
+.medicine-form-card,
+.delete-card {
+    position: relative;
+    background: rgba(255, 248, 239, 0.86);
+    border: 1px solid #f1d0d9;
+    box-shadow: 0 10px 0 rgba(232, 146, 173, 0.16);
+}
+
+.medicine-card {
+    min-height: 250px;
+    padding: 34px 22px 22px;
+    transform: rotate(-0.4deg);
+}
+
+.medicine-card:nth-child(2n) {
+    transform: rotate(0.5deg);
+}
+
+.medicine-card h2,
+.empty-note h2 {
+    margin: 0 0 12px;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.medicine-card__comment {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.medicine-card__meta {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.weekdays,
+.medicine-times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.weekdays span,
+.medicine-times span {
+    display: inline-flex;
+    min-height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    background: rgba(255, 242, 217, 0.9);
+    border: 1px solid #f0cbd5;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.weekdays span.is-active {
+    background: var(--pink);
+    border-color: var(--pink-dark);
+}
+
+.medicine-card__actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.medicine-card__actions a {
+    color: #b83d6b;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+.empty-note {
+    max-width: 420px;
+    min-height: 220px;
+    padding: 36px 24px 24px;
+}
+
+.empty-note p {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* Medicine form */
+
+.form-screen {
+    display: grid;
+    place-items: center;
+}
+
+.medicine-form-card {
+    width: min(760px, 100%);
+    max-height: 100%;
+    padding: 42px 30px 28px;
+    overflow: hidden;
+    background: rgba(255, 242, 217, 0.88);
+    box-shadow: var(--shadow);
+    transform: rotate(-0.4deg);
+}
+
+.medicine-form-card h1,
+.delete-card h1 {
+    margin: 0 0 26px;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.06em;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 22px;
+}
+
+.form-grid label,
+.time-row label {
+    display: grid;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.weekdays-form,
+.times-form {
+    margin-top: 24px;
+}
+
+.weekdays-form p,
+.times-form p {
+    margin: 0 0 10px;
+    color: var(--pink-dark);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.weekdays-form__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.weekdays-form__list label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 6px 10px;
+    background: rgba(255, 248, 239, 0.9);
+    border: 1px solid #f0cbd5;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.paper-checkbox {
+    accent-color: var(--pink-dark);
+}
+
+.times-form__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.time-row {
+    display: grid;
+    gap: 8px;
+}
+
+.delete-row {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    color: #b83d6b;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+.delete-card {
+    width: min(480px, 100%);
+    padding: 42px 30px 28px;
+    background: rgba(255, 242, 217, 0.88);
+    box-shadow: var(--shadow);
+}
+
+.delete-card p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* Mobile compact */
+
+@media (max-width: 980px) {
+    .medicine-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+
+    .times-form__list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .content-screen,
+    .form-screen {
+        padding: 14px;
+    }
+
+    .medicine-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medicine-form-card {
+        padding: 34px 20px 22px;
+    }
+
+    .medicine-form-card h1 {
+        font-size: 28px;
+    }
+}
