@@ -129,3 +129,24 @@ MedicineTimeFormSet = modelformset_factory(
     extra=3,
     can_delete=True
 )
+
+from .models import Profile
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['display_name', 'avatar']
+        widgets = {
+            'display_name': forms.TextInput(attrs={
+                'class': 'paper-input',
+                'placeholder': 'Как тебя называть?'
+            }),
+            'avatar': forms.FileInput(attrs={
+                'class': 'paper-file'
+            }),
+        }
+        labels = {
+            'display_name': 'Имя на сайте',
+            'avatar': 'Аватар',
+        }

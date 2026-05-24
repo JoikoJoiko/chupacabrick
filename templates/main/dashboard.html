@@ -73,18 +73,35 @@
         </div>
     </section>
 
-    <aside class="side-note profile-note">
-        <div class="small-tape"></div>
+<aside class="side-note profile-note">
+    <div class="small-tape"></div>
 
-        <h2>Профиль</h2>
+    <h2>Профиль</h2>
+<div class="mini-profile">
+    {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Аватар">
+    {% else %}
+        <div class="mini-avatar-placeholder">
+            {{ user.username|first|upper }}
+        </div>
+    {% endif %}
 
-        <p><strong>Имя:</strong> {{ user.username }}</p>
-        <p><strong>Пропусков подряд:</strong> {{ pet.missed_in_row }}</p>
-        <p><strong>Опыт:</strong> {{ pet.experience }}</p>
+    <div>
+        <strong>{{ profile.display_name|default:user.username }}</strong>
+        <span>@{{ user.username }}</span>
+    </div>
+</div>
 
-        <a href="{% url 'main:medicines' %}" class="paper-btn paper-btn--secondary">
-            Мои лекарства
-        </a>
-    </aside>
+    <p><strong>Пропусков подряд:</strong> {{ pet.missed_in_row }}</p>
+    <p><strong>Опыт:</strong> {{ pet.experience }}</p>
+
+    <a href="{% url 'main:profile' %}" class="paper-btn paper-btn--secondary">
+        Настроить профиль
+    </a>
+
+    <a href="{% url 'main:medicines' %}" class="paper-btn paper-btn--secondary">
+        Мои лекарства
+    </a>
+</aside>
 </section>
 {% endblock %}

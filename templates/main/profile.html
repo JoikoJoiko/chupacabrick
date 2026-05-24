@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль — ChupaCare{% endblock %}
+
+{% block content %}
+<section class="profile-screen">
+    <form method="post" enctype="multipart/form-data" class="profile-card">
+        {% csrf_token %}
+
+        <div class="tape tape--left"></div>
+        <div class="tape tape--right"></div>
+
+        <div class="profile-card__preview">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="Аватар">
+            {% else %}
+                <div class="avatar-placeholder">
+                    {{ user.username|first|upper }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="profile-card__content">
+            <p class="content-label">личные данные</p>
+            <h1>Профиль</h1>
+
+            <div class="profile-info">
+                <p><strong>Логин:</strong> {{ user.username }}</p>
+                <p><strong>Питомец:</strong> {{ user.pet.name }}</p>
+            </div>
+
+            <div class="paper-form">
+                <label>
+                    <span>{{ form.display_name.label }}</span>
+                    {{ form.display_name }}
+                    {{ form.display_name.errors }}
+                </label>
+
+                <label>
+                    <span>{{ form.avatar.label }}</span>
+                    {{ form.avatar }}
+                    {{ form.avatar.errors }}
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="paper-btn paper-btn--primary">
+                    Сохранить
+                </button>
+
+                <a href="{% url 'main:dashboard' %}" class="paper-btn paper-btn--secondary">
+                    В кабинет
+                </a>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

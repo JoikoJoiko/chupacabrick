@@ -8,8 +8,8 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView
 
-from .forms import RegisterForm, LoginForm, MedicineForm, MedicineTimeFormSet
-from .models import IntakeHistory, Medicine, MedicineTime, Pet
+from .forms import RegisterForm, LoginForm, MedicineForm, MedicineTimeFormSet, ProfileForm
+from .models import IntakeHistory, Medicine, MedicineTime, Pet, Profile
 
 
 def index(request):
@@ -319,8 +319,34 @@ def medicine_update(request, pk):
         'button_text': 'Обновить',
     })
 
-
 @login_required
+def profile(request):
+    user_profile, _ = Profile.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'display_name': request.user.username
+        }
+    )
+
+    get_or_create_pet(request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=user_profile
+        )
+
+        if form.is_valid():
+            form.save()
+            return redirect('main:profile')
+    else:
+        form = ProfileForm(instance=user_profile)
+
+    return render(request, 'main/profile.html', {
+        'form': form,
+        'profile': user_profile,
+    })
 def intake_history(request):
     history = IntakeHistory.objects.filter(
         user=request.user
@@ -339,4 +365,24 @@ def medicine_delete(request, pk):
 
     return render(request, 'main/medicine_confirm_delete.html', {
         'medicine': medicine,
+    })
+@login_required
+def dashboard(request):
+    fix_missed_intakes(request.user)
+
+    pet = get_or_create_pet(request.user)
+
+    profile, _ = Profile.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'display_name': request.user.username
+        }
+    )
+
+    schedule = build_today_schedule(request.user)
+
+    return render(request, 'main/dashboard.html', {
+        'pet': pet,
+        'profile': profile,
+        'schedule': schedule,
     })

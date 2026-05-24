@@ -22,4 +22,5 @@ urlpatterns = [
     path('medicines/<int:pk>/edit/', views.medicine_update, name='medicine_update'),
     path('history/', views.intake_history, name='history'),
     path('medicines/<int:pk>/delete/', views.medicine_delete, name='medicine_delete'),
+    path('profile/', views.profile, name='profile'),
 ]
