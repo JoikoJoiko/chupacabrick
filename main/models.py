@@ -204,3 +204,43 @@ class IntakeHistory(models.Model):
 
     def __str__(self):
         return f'{self.medicine.title} — {self.date} — {self.get_status_display()}'
+
+
+class PetAction(models.Model):
+    ACTION_PAT = 'pat'
+    ACTION_PLAY = 'play'
+
+    ACTION_CHOICES = [
+        (ACTION_PAT, 'Погладить'),
+        (ACTION_PLAY, 'Поиграть'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='pet_actions',
+        verbose_name='Пользователь'
+    )
+    pet = models.ForeignKey(
+        Pet,
+        on_delete=models.CASCADE,
+        related_name='actions',
+        verbose_name='Питомец'
+    )
+    action = models.CharField(
+        max_length=20,
+        choices=ACTION_CHOICES,
+        verbose_name='Действие'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата действия'
+    )
+
+    class Meta:
+        verbose_name = 'Действие с питомцем'
+        verbose_name_plural = 'Действия с питомцем'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.pet.name} — {self.get_action_display()}'

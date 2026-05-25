@@ -9,8 +9,7 @@ from django.utils import timezone
 from django.views.generic import CreateView
 
 from .forms import RegisterForm, LoginForm, MedicineForm, MedicineTimeFormSet, ProfileForm
-from .models import IntakeHistory, Medicine, MedicineTime, Pet, Profile
-
+from .models import IntakeHistory, Medicine, MedicineTime, Pet, Profile, PetAction
 
 def index(request):
     return render(request, 'main/index.html')
@@ -235,6 +234,74 @@ def mark_taken(request, medicine_id, planned_time):
 
     return redirect('main:dashboard')
 
+
+@login_required
+def pet_action(request, action):
+    if request.method != 'POST':
+        return redirect('main:dashboard')
+
+    pet = get_or_create_pet(request.user)
+
+    if not pet.is_alive:
+        return redirect('main:dashboard')
+
+    if action not in [PetAction.ACTION_PAT, PetAction.ACTION_PLAY]:
+        return redirect('main:dashboard')
+
+    PetAction.objects.create(
+        user=request.user,
+        pet=pet,
+        action=action
+    )
+
+    if action == PetAction.ACTION_PAT:
+        pet.health = min(pet.health + 3, 100)
+        pet.experience += 3
+
+    if action == PetAction.ACTION_PLAY:
+        pet.health = min(pet.health + 5, 100)
+        pet.experience += 5
+
+    if pet.experience >= pet.level * 50:
+        pet.level += 1
+        pet.experience = 0
+
+    if pet.health >= 75:
+        pet.status = Pet.STATUS_HAPPY
+    elif pet.health >= 35:
+        pet.status = Pet.STATUS_NORMAL
+    else:
+        pet.status = Pet.STATUS_SAD
+
+    pet.save()
+
+    return redirect('main:dashboard')
+
+
+@login_required
+def create_new_pet(request):
+    if request.method != 'POST':
+        return redirect('main:dashboard')
+
+    old_pet = get_or_create_pet(request.user)
+
+    if old_pet.is_alive:
+        return redirect('main:dashboard')
+
+    old_pet.delete()
+
+    Pet.objects.create(
+        user=request.user,
+        name='Чупакабрик',
+        level=1,
+        health=100,
+        experience=0,
+        missed_in_row=0,
+        status=Pet.STATUS_NORMAL,
+        is_alive=True,
+    )
+
+    return redirect('main:dashboard')
 
 @login_required
 def medicines_list(request):

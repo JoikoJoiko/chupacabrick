@@ -16,6 +16,8 @@ urlpatterns = [
         views.mark_taken,
         name='mark_taken'
     ),
+    path('pet/action/<str:action>/', views.pet_action, name='pet_action'),
+    path('pet/new/', views.create_new_pet, name='create_new_pet'),
 
     path('medicines/', views.medicines_list, name='medicines'),
     path('medicines/create/', views.medicine_create, name='medicine_create'),

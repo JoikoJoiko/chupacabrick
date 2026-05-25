@@ -1407,3 +1407,13 @@ a {
         font-size: 34px;
     }
 }
+
+.pet-actions form {
+    margin: 0;
+}
+
+.pet-actions {
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}

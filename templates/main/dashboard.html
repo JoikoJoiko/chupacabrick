@@ -58,19 +58,38 @@
         </div>
 
         {% if not pet.is_alive %}
-            <p class="pet-warning">
-                Чупакабрик умер из-за пропусков. Потом сделаем кнопку создания нового.
-            </p>
+<p class="pet-warning">
+    Чупакабрик умер из-за пропусков. Можно начать заново с новым питомцем.
+</p>
         {% else %}
             <p>
                 Отмечай лекарства вовремя, чтобы Чупакабрик был счастливым.
             </p>
         {% endif %}
+<div class="pet-actions">
+    {% if pet.is_alive %}
+        <form method="post" action="{% url 'main:pet_action' 'pat' %}">
+            {% csrf_token %}
+            <button class="paper-btn paper-btn--primary" type="submit">
+                Погладить
+            </button>
+        </form>
 
-        <div class="pet-actions">
-            <button class="paper-btn paper-btn--primary" type="button">Погладить</button>
-            <button class="paper-btn paper-btn--secondary" type="button">Поиграть</button>
-        </div>
+        <form method="post" action="{% url 'main:pet_action' 'play' %}">
+            {% csrf_token %}
+            <button class="paper-btn paper-btn--secondary" type="submit">
+                Поиграть
+            </button>
+        </form>
+    {% else %}
+        <form method="post" action="{% url 'main:create_new_pet' %}">
+            {% csrf_token %}
+            <button class="paper-btn paper-btn--primary" type="submit">
+                Создать нового Чупакабрика
+            </button>
+        </form>
+    {% endif %}
+</div>
     </section>
 
 <aside class="side-note profile-note">

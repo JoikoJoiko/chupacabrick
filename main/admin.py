@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Pet, Medicine, MedicineTime, IntakeHistory
-
+from .models import Profile, Pet, Medicine, MedicineTime, IntakeHistory, PetAction
 
 class MedicineTimeInline(admin.TabularInline):
     model = MedicineTime
@@ -76,3 +75,9 @@ class IntakeHistoryAdmin(admin.ModelAdmin):
     )
     list_filter = ('status', 'date')
     search_fields = ('medicine__title', 'user__username')
+
+@admin.register(PetAction)
+class PetActionAdmin(admin.ModelAdmin):
+    list_display = ('pet', 'user', 'action', 'created_at')
+    list_filter = ('action', 'created_at')
+    search_fields = ('pet__name', 'user__username')
