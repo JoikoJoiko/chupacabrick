@@ -36,16 +36,15 @@
         <a href="{% url 'main:register' %}" class="paper-btn paper-btn--secondary">Регистрация</a>
     {% endif %}
 </div>        </div>
+<div class="stickers-zone">
+    <div class="photo-sticker photo-sticker--first">
+        <img src="{% static sticker_images.0 %}" alt="Чупакабрик">
+    </div>
 
-        <div class="stickers-zone">
-            <div class="photo-sticker photo-sticker--first">
-                <img src="{% static 'img/chupacabrik.png' %}" alt="Чупакабрик">
-            </div>
-
-            <div class="photo-sticker photo-sticker--second">
-                <img src="{% static 'img/chupacabrik.png' %}" alt="Весёлый Чупакабрик">
-            </div>
-        </div>
+    <div class="photo-sticker photo-sticker--second">
+        <img src="{% static sticker_images.1 %}" alt="Чупакабрик">
+    </div>
+</div>
     </div>
 
     <div class="home-screen__bottom">

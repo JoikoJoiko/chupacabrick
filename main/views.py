@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 
 from django.contrib.auth import login, logout
@@ -11,8 +12,36 @@ from django.views.generic import CreateView
 from .forms import RegisterForm, LoginForm, MedicineForm, MedicineTimeFormSet, ProfileForm
 from .models import IntakeHistory, Medicine, MedicineTime, Pet, Profile, PetAction
 
+
+STICKER_IMAGES = [
+    'img/stickers/sticker-1.png',
+    'img/stickers/sticker-2.png',
+    'img/stickers/sticker-3.png',
+    'img/stickers/sticker-4.png',
+]
+
+
+def get_random_stickers(count=2):
+    return random.sample(STICKER_IMAGES, k=min(count, len(STICKER_IMAGES)))
+
+
+def get_pet_image(pet):
+    if not pet.is_alive or pet.status == Pet.STATUS_DEAD:
+        return 'img/pet/dead.png'
+
+    if pet.status == Pet.STATUS_HAPPY:
+        return 'img/pet/happy.png'
+
+    if pet.status == Pet.STATUS_SAD:
+        return 'img/pet/sad.png'
+
+    return 'img/pet/normal.png'
+
+
 def index(request):
-    return render(request, 'main/index.html')
+    return render(request, 'main/index.html', {
+        'sticker_images': get_random_stickers(),
+    })
 
 
 class UserLoginView(LoginView):
@@ -22,6 +51,11 @@ class UserLoginView(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('main:dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['sticker_images'] = get_random_stickers()
+        return context
 
 
 class RegisterView(CreateView):
@@ -33,6 +67,11 @@ class RegisterView(CreateView):
         response = super().form_valid(form)
         login(self.request, self.object)
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['sticker_images'] = get_random_stickers()
+        return context
 
 
 def user_logout(request):
@@ -67,7 +106,6 @@ def get_today_medicines(user):
     }
 
     medicines = Medicine.objects.filter(**filters).prefetch_related('times')
-
     medicines = medicines.filter(end_date__isnull=True) | medicines.filter(end_date__gte=today)
 
     return medicines.distinct()
@@ -195,11 +233,22 @@ def dashboard(request):
     fix_missed_intakes(request.user)
 
     pet = get_or_create_pet(request.user)
+
+    profile, _ = Profile.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'display_name': request.user.username
+        }
+    )
+
     schedule = build_today_schedule(request.user)
+    pet_image = get_pet_image(pet)
 
     return render(request, 'main/dashboard.html', {
         'pet': pet,
+        'profile': profile,
         'schedule': schedule,
+        'pet_image': pet_image,
     })
 
 
@@ -303,6 +352,7 @@ def create_new_pet(request):
 
     return redirect('main:dashboard')
 
+
 @login_required
 def medicines_list(request):
     medicines = Medicine.objects.filter(user=request.user).prefetch_related('times')
@@ -386,6 +436,31 @@ def medicine_update(request, pk):
         'button_text': 'Обновить',
     })
 
+
+@login_required
+def medicine_delete(request, pk):
+    medicine = get_object_or_404(Medicine, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        medicine.delete()
+        return redirect('main:medicines')
+
+    return render(request, 'main/medicine_confirm_delete.html', {
+        'medicine': medicine,
+    })
+
+
+@login_required
+def intake_history(request):
+    history = IntakeHistory.objects.filter(
+        user=request.user
+    ).select_related('medicine')
+
+    return render(request, 'main/history.html', {
+        'history': history,
+    })
+
+
 @login_required
 def profile(request):
     user_profile, _ = Profile.objects.get_or_create(
@@ -413,43 +488,4 @@ def profile(request):
     return render(request, 'main/profile.html', {
         'form': form,
         'profile': user_profile,
-    })
-def intake_history(request):
-    history = IntakeHistory.objects.filter(
-        user=request.user
-    ).select_related('medicine')
-
-    return render(request, 'main/history.html', {
-        'history': history,
-    })
-
-def medicine_delete(request, pk):
-    medicine = get_object_or_404(Medicine, pk=pk, user=request.user)
-
-    if request.method == 'POST':
-        medicine.delete()
-        return redirect('main:medicines')
-
-    return render(request, 'main/medicine_confirm_delete.html', {
-        'medicine': medicine,
-    })
-@login_required
-def dashboard(request):
-    fix_missed_intakes(request.user)
-
-    pet = get_or_create_pet(request.user)
-
-    profile, _ = Profile.objects.get_or_create(
-        user=request.user,
-        defaults={
-            'display_name': request.user.username
-        }
-    )
-
-    schedule = build_today_schedule(request.user)
-
-    return render(request, 'main/dashboard.html', {
-        'pet': pet,
-        'profile': profile,
-        'schedule': schedule,
     })
